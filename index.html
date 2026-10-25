@@ -134,7 +134,9 @@ const KEY_BOZZA = 'prenota_bozza_v2';
 const LAY = [
   [/^cognome/i, { lab: 'Cognome', half: true, nome: true }],
   [/^nome/i, { lab: 'Nome', half: true, nome: true }],
+  [/^telefono dato/i, { lab: 'Telefono dato quando hai prenotato', ph: '333 1234567' }],
   [/^telefono/i, { lab: 'Telefono', half: true, ph: '333 1234567' }],
+  [/^giorno dell/i, { ph: 'es. sabato 14 novembre' }],
   [/^e-?mail/i, { lab: 'Email (facoltativa)', half: true, ph: 'nome@esempio.it' }],
   [/^età/i, { lab: 'Età di chi deve essere visitato' }],
   [/^che cosa vuoi far vedere/i, { ph: 'Per esempio: un neo sulla schiena che è cambiato; acne sul viso; macchie sulle mani' }],
@@ -231,6 +233,12 @@ function valida(p) {
 // ---------- esito (senza prezzi) ----------
 function esito() {
   const si = s => /^sì/i.test(s);
+  if (/^disdire/i.test(val('Che cosa devi fare'))) {
+    const f = val('Avevi già un appuntamento');
+    if (!f) return null;
+    return { nome: 'Disdetta', disdetta: true, tardi: /entro/i.test(f),
+      det: /^no/i.test(f) ? 'Della richiesta di prenotazione: la segreteria non ti chiamerà.' : 'Dell\'appuntamento già fissato.' };
+  }
   const A = val('Prenoti per i nei');
   if (!A) return null;
   const MCU = { nome: 'Consulto mirato neo urgente', det: 'Il dottore vede solo questi nei, con tempi più rapidi. Se un neo va tolto, si fa in un secondo appuntamento.' };
@@ -395,15 +403,27 @@ function disegnaRiepilogo() {
 }
 
 function disegnaFatto() {
+  const e = ultimo.esito;
+  if (e && e.disdetta) {
+    const card = el('section', { class: 'card' }, cartaEsito(e, 'Hai chiesto'));
+    if (e.tardi) {
+      const tel = el('p', { class: 'descr box' });
+      tel.innerHTML = '<b>La disdetta è stata ricevuta.</b> Visto che l\'appuntamento è entro due giorni, cerca di avvisare anche per telefono la segreteria al <a href="tel:+393280053473"><b>328 005 3473</b></a>.';
+      card.append(tel);
+    } else {
+      card.append(el('p', { class: 'descr' }, 'Avvisiamo noi la segreteria: non serve fare altro.'));
+    }
+    card.append(el('p', { class: 'descr' }, 'Quando vorrai fissare un nuovo appuntamento in una data che ti va bene, prenota di nuovo da questa pagina.'));
+    card.append(el('p', { class: 'aiuto', style: 'text-align:center;margin:0' }, 'Puoi chiudere questa pagina.'));
+    return [el('section', { class: 'conf' }, el('div', { class: 't' }, '✓ Disdetta registrata'), ultimo.nome ? el('div', {}, ultimo.nome) : null), card];
+  }
   const out = [el('section', { class: 'conf' }, el('div', { class: 't' }, '✓ Richiesta ricevuta'),
     ultimo.nome ? el('div', {}, ultimo.nome) : null)];
   const card = el('section', { class: 'card' });
   if (ultimo.esito) card.append(cartaEsito(ultimo.esito, 'Hai chiesto'));
   const rr = regole();
   if (rr.length) card.append(el('h2', { class: 'q' }, 'Come funziona adesso'), el('ul', { class: 'regole' }, rr.map(r => { const li = el('li'); li.innerHTML = linkify(r); return li; })));
-  card.append(el('button', { type: 'button', class: 'big pri', onclick: altraPersona }, '➕ Prenota anche per un\'altra persona'),
-    el('div', { class: 'aiuto', style: 'text-align:center;margin-top:-6px' }, 'Telefono e giorni restano già compilati.'),
-    el('button', { type: 'button', class: 'big', onclick: () => { ultimo = null; ris = {}; storia = [0]; modo = 'finito'; disegna(); } }, 'Ho finito'));
+  card.append(el('p', { class: 'aiuto', style: 'text-align:center;margin:0' }, 'Puoi chiudere questa pagina.'));
   out.push(card);
   return out;
 }
@@ -511,22 +531,6 @@ async function invia() {
       : 'Invio non riuscito. Controlla la connessione e premi di nuovo «Invia». Se non funziona, usa il modulo Google (link in fondo alla pagina).');
     disegna();
   }
-}
-function altraPersona() {
-  const prima = ultimo.ris, tutte = S.pagine.flatMap(p => p.domande);
-  ris = {};
-  tutte.forEach(d => {
-    if ((d.tipo === 'spunte' && d.scelte.length === 1) || isTel(d) || isEmail(d) || d.tipo === 'griglia') { if (prima[d.id]) ris[d.id] = prima[d.id]; }
-  });
-  const ins = tutte.find(d => /insieme/i.test(d.titolo));
-  if (ins && ultimo.nome) {
-    const v = String(prima[ins.id] || '');
-    ris[ins.id] = v.indexOf(ultimo.nome) >= 0 ? v : (v ? v + ', ' : '') + ultimo.nome;
-  }
-  preimposta();
-  ultimo = null; storia = [0]; modo = 'pagina'; err = {}; inizio = Date.now();
-  avviso = el('div', { class: 'notice' }, 'Nuova scheda per un\'altra persona: telefono e giorni sono già compilati.');
-  disegna(true);
 }
 function preimposta() {
   S.pagine.flatMap(p => p.domande).forEach(d => {
