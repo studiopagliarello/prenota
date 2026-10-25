@@ -7,371 +7,491 @@
 <title>Prenotazione visita dermatologica</title>
 <style>
 :root{
-  --bg:#f4f6f8; --card:#ffffff; --ink:#1d2733; --muted:#5d6b7a; --line:#dde3ea;
-  --accent:#1f6f8b; --accent-ink:#ffffff; --accent-soft:#e3f0f5; --warn:#b4471f; --warn-soft:#fbeee8;
-  --ok:#2e7d4f; --ok-soft:#e6f4ec; --radius:14px;
+  --bg:#eef1f0; --card:#ffffff; --ink:#18211f; --muted:#5b6966; --line:#d3dbd9;
+  --accent:#1b5d65; --accent-ink:#ffffff; --accent-soft:#e1eeee;
+  --esito:#1f3f43; --esito-ink:#f1f7f6;
+  --err:#b42318; --err-soft:#fdecea; --ok:#1e6b45; --ok-soft:#e3f3ea; --radius:12px;
 }
 @media (prefers-color-scheme: dark){
   :root{
-    --bg:#11161c; --card:#1a222b; --ink:#e7edf3; --muted:#9aa8b6; --line:#2c3743;
-    --accent:#5fb3d0; --accent-ink:#0b1a20; --accent-soft:#1c3440; --warn:#f0a07e; --warn-soft:#3a2219;
-    --ok:#7fd1a1; --ok-soft:#173225;
+    --bg:#111716; --card:#1a2321; --ink:#e5ecea; --muted:#9eaca9; --line:#34423f;
+    --accent:#72b9bf; --accent-ink:#0d1a1a; --accent-soft:#1e3336;
+    --esito:#27474b; --esito-ink:#eef6f5;
+    --err:#f3a59c; --err-soft:#3b1f1c; --ok:#8fd3ad; --ok-soft:#183026; color-scheme:dark;
   }
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);
-  font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  -webkit-text-size-adjust:100%}
-.wrap{max-width:560px;margin:0 auto;padding:16px 16px 120px}
-header{padding:8px 2px 12px}
-header .studio{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  font:17px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-text-size-adjust:100%}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:600px;margin:0 auto;padding:14px 16px 120px;display:grid;gap:12px}
+header .studio{font-size:12.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
 header h1{font-size:22px;line-height:1.25;margin:2px 0 0}
-.bar{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin:6px 0 16px}
+.bar{height:5px;background:var(--line);border-radius:3px;overflow:hidden}
 .bar>i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
-.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 16px;margin-bottom:14px}
-.sez{font-size:13px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px}
-.descr{color:var(--ink);white-space:pre-line;margin:0 0 14px}
+.path{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--muted)}
+.path:empty{display:none}
+.path button{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:2px 10px;font-size:13px;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.path .sep{color:var(--line)}
+.notice{border-radius:10px;padding:10px 14px;font-size:15px;background:var(--accent-soft)}
+.notice button{border:0;background:none;color:var(--accent);text-decoration:underline;padding:0;font-size:15px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 16px;display:grid;gap:14px}
+.eyebrow{font-size:12.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.descr{margin:0;white-space:pre-line}
 .descr.box{background:var(--accent-soft);border-radius:10px;padding:12px 14px}
-h2{font-size:19px;line-height:1.3;margin:0 0 6px}
-.aiuto{color:var(--muted);font-size:15px;margin:0 0 12px;white-space:pre-line}
-.obbl{color:var(--warn);font-weight:700}
-.opz{display:block;width:100%;text-align:left;background:var(--card);color:var(--ink);border:1.5px solid var(--line);
-  border-radius:12px;padding:14px 14px;margin:8px 0;font:inherit;cursor:pointer;min-height:52px}
-.opz:active{transform:scale(.99)}
-.opz.sel{border-color:var(--accent);background:var(--accent-soft);font-weight:600}
-.opz .tick{float:right;color:var(--accent);font-weight:700;margin-left:10px}
+.descr a,.aiuto a,.piede a{color:var(--accent)}
+.campi{display:grid;grid-template-columns:1fr 1fr;gap:14px 12px}
+.fld{grid-column:span 2;display:grid;gap:5px;align-content:start;min-width:0}
+.fld.half{grid-column:span 1}
+@media (max-width:420px){.fld.half{grid-column:span 2}}
+.fld>.lab{font-size:15px;font-weight:600}
+.req::after{content:" *";color:var(--err)}
+.aiuto{font-size:14px;color:var(--muted);white-space:pre-line}
 input[type=text],input[type=tel],input[type=email],textarea{width:100%;font:inherit;color:var(--ink);background:var(--card);
-  border:1.5px solid var(--line);border-radius:12px;padding:13px 14px;outline:none}
+  border:2px solid var(--line);border-radius:10px;padding:10px 12px;outline:none}
 input:focus,textarea:focus{border-color:var(--accent)}
-textarea{min-height:120px;resize:vertical}
-.err{color:var(--warn);background:var(--warn-soft);border-radius:10px;padding:10px 12px;margin-top:12px;font-size:15px}
-.griglia{width:100%;border-collapse:separate;border-spacing:0 8px}
-.griglia th{font-size:14px;color:var(--muted);font-weight:600;text-align:center;padding:0 4px}
-.griglia td{padding:0 4px}
-.griglia td:first-child{font-weight:600;padding-left:0}
-.chip{width:100%;min-height:46px;border:1.5px solid var(--line);background:var(--card);color:var(--muted);border-radius:10px;font:inherit;font-size:15px;cursor:pointer}
-.chip.sel{border-color:var(--accent);background:var(--accent);color:var(--accent-ink);font-weight:600}
-.nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);
-  padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
-.nav .in{max-width:560px;margin:0 auto;display:flex;gap:10px}
-.btn{flex:1;font:inherit;font-weight:600;border-radius:12px;padding:14px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
-.btn.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);flex:2}
-.btn[disabled]{opacity:.5}
-.riep dt{color:var(--muted);font-size:14px;margin-top:12px}
-.riep dd{margin:2px 0 0;font-weight:600;white-space:pre-line}
-.riep a{font-weight:400;font-size:14px;color:var(--accent);margin-left:6px}
-.fatto{background:var(--ok-soft);border-color:transparent;text-align:center}
-.fatto .ico{font-size:40px;color:var(--ok)}
-.piede{color:var(--muted);font-size:14px;text-align:center;margin-top:18px}
-.piede a,.descr a,.aiuto a{color:var(--accent)}
+textarea{min-height:84px;resize:vertical}
+.msg{font-size:14px;color:var(--err);font-weight:500}
+.fld.bad input,.fld.bad textarea,.fld.bad .seg,.fld.bad .spunta{border-color:var(--err);background:var(--err-soft)}
+.seg{display:flex;flex-wrap:wrap;border:2px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{flex:1 1 auto;border:0;background:var(--card);padding:10px 8px;font-size:15px;min-height:44px}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);font-weight:600}
+.spunta{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;border:2px solid var(--line);background:var(--card);border-radius:10px;padding:12px 14px;font-size:16px}
+.spunta .box{flex:none;width:24px;height:24px;border:2px solid var(--line);border-radius:6px;display:grid;place-items:center;font-weight:700}
+.spunta[aria-pressed=true]{border-color:var(--accent);background:var(--accent-soft)}
+.spunta[aria-pressed=true] .box{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.q{font-size:19px;font-weight:600;margin:0;line-height:1.3}
+.scelte{display:grid;gap:8px}
+.scelta{display:block;width:100%;text-align:left;border:2px solid var(--line);background:var(--card);border-radius:10px;padding:13px 16px;font-size:17px;min-height:52px}
+.scelta:hover{border-color:var(--accent)}
+.scelta.sel{border-color:var(--accent);background:var(--accent-soft);font-weight:600}
+.griglia{border-collapse:separate;border-spacing:6px;margin:-6px}
+.griglia th{font-size:15px;font-weight:600;text-align:left;padding-right:6px;white-space:nowrap}
+.cella{min-width:104px;height:44px;border:2px solid var(--line);background:var(--card);border-radius:8px;font-size:14.5px;color:var(--muted)}
+.cella[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.mini{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:6px 12px;font-size:14px}
+.esito{background:var(--esito);color:var(--esito-ink);border-radius:10px;padding:14px 16px;display:grid;gap:4px}
+.esito .lab{font-size:12.5px;letter-spacing:.08em;text-transform:uppercase;opacity:.8}
+.esito .nome{font-size:21px;font-weight:600;line-height:1.25}
+.esito .det{font-size:15px;opacity:.9}
+.riep{border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.riep .r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 12px;padding:9px 14px;border-top:1px solid var(--line);align-items:baseline}
+.riep .r:first-child{border-top:0}
+.riep .k{grid-column:1/-1;font-size:13.5px;color:var(--muted)}
+.riep .v{font-weight:500;overflow-wrap:anywhere;white-space:pre-line}
+.riep .c{border:0;background:none;color:var(--accent);text-decoration:underline;font-size:14px;padding:0}
+.regole{margin:0;padding-left:20px;display:grid;gap:6px}
+.conf{background:var(--ok-soft);border:1px solid var(--ok);border-radius:var(--radius);padding:22px 18px;display:grid;gap:8px;text-align:center}
+.conf .t{font-size:23px;font-weight:600;color:var(--ok)}
+.big{border-radius:10px;padding:13px 18px;font-size:17px;font-weight:600;border:2px solid var(--accent);background:var(--card);color:var(--accent);width:100%}
+.big.pri{background:var(--accent);color:var(--accent-ink)}
+.err-box{background:var(--err-soft);color:var(--err);border-radius:10px;padding:10px 14px;font-size:15px}
+.nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+.nav .in{max-width:600px;margin:0 auto;display:flex;align-items:center;gap:10px}
+.nav .msgb{flex:1;text-align:center;font-size:14px;color:var(--muted)}
+.nav .msgb.bad{color:var(--err);font-weight:600}
+.nb{border-radius:10px;padding:13px 18px;font-size:17px;font-weight:600;border:2px solid var(--line);background:var(--card)}
+.nb.pri{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);min-width:150px}
+.nb.invia{background:var(--ok);border-color:var(--ok);color:var(--card);min-width:170px}
+.nb[disabled]{opacity:.45}
+.piede{color:var(--muted);font-size:14px;text-align:center}
 .trappola{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 .carico{text-align:center;color:var(--muted);padding:40px 0}
+@media (prefers-reduced-motion:no-preference){.card{animation:in .14s ease-out}@keyframes in{from{opacity:.4;transform:translateY(4px)}}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <div class="studio">Dott. Calogero Pagliarello · Dermatologo</div>
-    <h1 id="titolo">Prenotazione visita dermatologica</h1>
+    <h1>Prenotazione visita dermatologica</h1>
   </header>
   <div class="bar"><i id="barra"></i></div>
+  <nav class="path" id="path" aria-label="Le tue risposte"></nav>
+  <div id="notice"></div>
   <main id="main"><div class="carico">Caricamento…</div></main>
   <div class="trappola" aria-hidden="true"><label>Sito <input id="sito" type="text" tabindex="-1" autocomplete="off"></label></div>
   <p class="piede" id="piede"></p>
 </div>
-<nav class="nav" id="nav" hidden>
+<div class="nav" id="nav" hidden>
   <div class="in">
-    <button class="btn" id="indietro" type="button">Indietro</button>
-    <button class="btn pri" id="avanti" type="button">Avanti</button>
+    <button class="nb" id="bInd" type="button">← Indietro</button>
+    <span class="msgb" id="msgb"></span>
+    <button class="nb pri" id="bAv" type="button">Avanti →</button>
   </div>
-</nav>
+</div>
 
 <script>
 // Indirizzo dello «sportello» Apps Script (link /exec del deployment). Da cambiare solo se si rifà il deployment.
 const API = 'https://script.google.com/macros/s/AKfycbwYP--O1pukvvEgKrlq5JYl-TisJLAuv-3iMopVX-Y4--Ji7q92dtoBr4qCZHB8tT_bSQ/exec';
 const MODULO_RISERVA = 'https://docs.google.com/forms/d/e/1FAIpQLSdawhisZXfgekKljdzbstleeZc7mLEd2Kbo7s3GrT_oJiMiuw/viewform';
+const KEY_BOZZA = 'prenota_bozza_v2';
 
-let S = null;            // struttura del modulo
-let risposte = {};       // id domanda -> valore
-let storia = [];         // percorso: [{p, q}] (p = indice pagina, q = indice domanda, -1 = pagina senza domande)
-let modo = 'domanda';    // 'domanda' | 'riepilogo' | 'fatto'
-let inizio = Date.now();
-let ultimaPersona = '';
-let inAttesa = false;
+// Etichette brevi e larghezze (il titolo vero, usato dal modulo, resta quello della struttura).
+const LAY = [
+  [/^cognome/i, { lab: 'Cognome', half: true, nome: true }],
+  [/^nome/i, { lab: 'Nome', half: true, nome: true }],
+  [/^telefono/i, { lab: 'Telefono', half: true, ph: '333 1234567' }],
+  [/^e-?mail/i, { lab: 'Email (facoltativa)', half: true, ph: 'nome@esempio.it' }],
+  [/^età/i, { lab: 'Età di chi deve essere visitato' }],
+  [/^che cosa vuoi far vedere/i, { ph: 'Per esempio: un neo sulla schiena che è cambiato; acne sul viso; macchie sulle mani' }],
+  [/^in che anno/i, { half: true, ph: 'es. ' + (new Date().getFullYear() - 1) }],
+  [/^in che mese/i, { half: true, ph: 'es. marzo' }],
+  [/insieme/i, { nome: true, ph: 'es. Rossi Anna' }],
+];
+const lay = d => (LAY.find(([re]) => re.test(d.titolo)) || [null, {}])[1];
+
+let S = null, ris = {}, storia = [0], modo = 'pagina', err = {}, invio = false, inizio = Date.now(), ultimo = null, avviso = null;
 
 const $ = id => document.getElementById(id);
-const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const el = (tag, attrs, ...kids) => {
+  const e = document.createElement(tag);
+  Object.entries(attrs || {}).forEach(([k, v]) => {
+    if (v == null || v === false) return;
+    if (k === 'class') e.className = v; else if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v === true ? '' : v);
+  });
+  kids.flat().forEach(k => { if (k != null && k !== false) e.append(k.nodeType ? k : document.createTextNode(k)); });
+  return e;
+};
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const linkify = s => esc(s)
   .replace(/(https?:\/\/[^\s<]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>')
   .replace(/([\w.+-]+@[\w-]+\.[\w.]+)/g, '<a href="mailto:$1">$1</a>');
-
-// ---------- caricamento ----------
-async function carica() {
-  try {
-    const r = await fetch(API, { credentials: 'omit' });
-    const j = await r.json();
-    if (!j.ok) throw new Error(j.errore || 'errore');
-    S = j.struttura;
-    // Toglie dalla descrizione la riga che rimanda a questa pagina.
-    S.pagine[0].descr = (S.pagine[0].descr || '').split('\n').filter(l => l.indexOf('github.io') < 0).join('\n').replace(/^\n+/, '');
-    $('piede').innerHTML = 'Problemi con questa pagina? Usa il <a href="' + MODULO_RISERVA + '" target="_blank" rel="noopener">modulo Google</a>.';
-    nuovaScheda();
-  } catch (e) {
-    $('main').innerHTML = '<div class="card"><h2>La pagina non si è caricata</h2><p class="aiuto">Controlla la connessione e riprova, oppure usa il modulo Google.</p>' +
-      '<a class="opz" href="' + MODULO_RISERVA + '">Apri il modulo Google</a><button class="opz" onclick="location.reload()">Riprova</button></div>';
-  }
+const testo = (cls, s) => { const p = el('p', { class: cls }); p.innerHTML = linkify(s); return p; };
+const corto = s => String(s || '').split(/[:(]/)[0].trim();
+const iniziali = s => String(s || '').toLowerCase().replace(/(^|[\s'’-])(\p{L})/gu, (m, a, b) => a + b.toUpperCase());
+function formattaTel(v) {
+  const s = String(v || '').trim(), d = s.replace(/[^\d+]/g, '');
+  if (/^3\d{9}$/.test(d)) return d.slice(0, 3) + ' ' + d.slice(3);
+  if (/^\+393\d{9}$/.test(d)) return '+39 ' + d.slice(3, 6) + ' ' + d.slice(6);
+  return s.replace(/\s+/g, ' ');
 }
+const isTel = d => /^telefono/i.test(d.titolo), isEmail = d => /^e-?mail/i.test(d.titolo), isAnno = d => /in che anno/i.test(d.titolo);
 
-function nuovaScheda() {
-  storia = [{ p: 0, q: S.pagine[0].domande.length ? 0 : -1 }];
-  modo = 'domanda';
-  inizio = Date.now();
-  mostra();
+// ---------- struttura ----------
+// In ogni pagina la domanda «che smista» è l'ultima scelta con un salto: va in fondo, a pulsanti grandi.
+function smista(p) {
+  const pag = S.pagine[p];
+  let q = null;
+  pag.domande.forEach(d => { if (d.tipo === 'scelta' && d.scelte.some(c => c.nav)) q = d; });
+  return q;
 }
-
-// ---------- percorso ----------
-const cur = () => storia[storia.length - 1];
-const domandaDi = st => st.q >= 0 ? S.pagine[st.p].domande[st.q] : null;
-const indicePagina = id => S.pagine.findIndex(p => p.id === id);
-
-function paginaDopo(p) {
+const campiDi = p => S.pagine[p].domande.filter(d => d !== smista(p) && d.tipo !== 'non_gestito');
+function dopo(p) {
   const pag = S.pagine[p];
   let dest = null;
-  pag.domande.forEach(d => {                               // l'ultima scelta con salto della pagina decide
+  pag.domande.forEach(d => {
     if (d.tipo !== 'scelta') return;
-    const c = (d.scelte || []).find(c => c.v === risposte[d.id]);
+    const c = d.scelte.find(c => c.v === ris[d.id]);
     if (c && c.nav) dest = c.nav;
   });
   if (!dest) dest = pag.dopo || 'successiva';
   if (dest === 'invia') return -1;
   if (dest === 'inizio') return 0;
   if (dest === 'successiva') return p + 1 < S.pagine.length ? p + 1 : -1;
-  const i = indicePagina(dest);
+  const i = S.pagine.findIndex(x => x.id === dest);
   return i >= 0 ? i : -1;
 }
-
-function avanti() {
-  const st = cur();
-  const d = domandaDi(st);
-  if (d) {
-    const e = errore(d);
-    if (e) { mostraErrore(e); return; }
-  }
-  const pag = S.pagine[st.p];
-  if (st.q >= 0 && st.q + 1 < pag.domande.length) { storia.push({ p: st.p, q: st.q + 1 }); return mostra(); }
-  const np = paginaDopo(st.p);
-  if (np < 0) { modo = 'riepilogo'; return mostra(); }
-  storia.push({ p: np, q: S.pagine[np].domande.length ? 0 : -1 });
-  mostra();
-}
-
-function indietro() {
-  if (modo === 'riepilogo') { modo = 'domanda'; return mostra(); }
-  if (storia.length > 1) { storia.pop(); mostra(); }
+const domandePercorso = () => storia.flatMap(p => S.pagine[p].domande.filter(d => d.tipo !== 'info' && d.tipo !== 'non_gestito'));
+function val(prefisso) {
+  const d = domandePercorso().find(x => x.titolo.toLowerCase().startsWith(prefisso.toLowerCase()));
+  return d ? String(ris[d.id] || '') : '';
 }
 
 // ---------- controlli ----------
-const isTel = d => /^telefono/i.test(d.titolo);
-const isEmail = d => /^e-?mail/i.test(d.titolo);
-const isAnno = d => /in che anno/i.test(d.titolo);
-
 function vuota(d) {
-  const v = risposte[d.id];
+  const v = ris[d.id];
   if (d.tipo === 'griglia') return !v || !Object.values(v).some(a => a && a.length);
   if (Array.isArray(v)) return !v.length;
-  return v === undefined || v === null || String(v).trim() === '';
+  return v == null || String(v).trim() === '';
 }
-
-function errore(d) {
-  if (d.tipo === 'info' || d.tipo === 'non_gestito') return '';
-  if (vuota(d)) return d.obbl ? (d.tipo === 'spunte' && d.scelte.length === 1 ? 'Per continuare devi spuntare la casella.' : 'Questa risposta è obbligatoria.') : '';
-  const v = String(risposte[d.id]).trim();
-  if (isTel(d)) {
-    const cifre = v.replace(/\D/g, '');
-    if (!/^\+?[\d\s]+$/.test(v) || cifre.length < 9 || cifre.length > 13) return 'Controlla il numero di telefono: servono almeno 9 cifre.';
+function controlla(d) {
+  if (vuota(d)) {
+    if (!d.obbl) return '';
+    if (d.tipo === 'spunte') return 'Per continuare devi spuntare la casella.';
+    if (d.tipo === 'scelta') return 'Scegli una risposta.';
+    if (d.tipo === 'griglia') return 'Segna almeno un giorno.';
+    return 'Da compilare.';
   }
+  const v = String(ris[d.id]).trim();
+  if (isTel(d)) { const c = v.replace(/\D/g, ''); if (!/^\+?[\d\s./-]+$/.test(v) || c.length < 9 || c.length > 13) return 'Scrivi solo il numero, per esempio 333 1234567.'; }
   if (isEmail(d) && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return 'Controlla l\'indirizzo email.';
-  if (isAnno(d)) {
-    const a = Number(v), max = new Date().getFullYear();
-    if (!/^\d{4}$/.test(v) || a < 1995 || a > max) return 'Scrivi l\'anno con quattro cifre (per esempio ' + (max - 1) + ').';
-  }
-  if (d.tipo === 'scelta' && risposte[d.id] === '__altro__') return 'Scrivi la tua risposta.';
+  if (isAnno(d)) { const a = Number(v), max = new Date().getFullYear(); if (!/^\d{4}$/.test(v) || a < 1995 || a > max) return 'L\'anno con quattro cifre, per esempio ' + (max - 1) + '.'; }
   return '';
 }
-
-function mostraErrore(msg) {
-  let el = document.querySelector('.err');
-  if (!el) { el = document.createElement('div'); el.className = 'err'; document.querySelector('#main .card:last-child').appendChild(el); }
-  el.textContent = msg;
-  el.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+function valida(p) {
+  err = {};
+  campiDi(p).forEach(d => { const e = controlla(d); if (e) err[d.id] = e; });
+  return !Object.keys(err).length;
 }
 
-function formattaTel(v) {
-  const p = v.trim().startsWith('+') ? '+' : '';
-  const c = v.replace(/\D/g, '');
-  if (!c) return v.trim();
-  if (p) return '+' + c.replace(/^(\d{2})(\d{3})(\d{3})(\d+)$/, '$1 $2 $3 $4');
-  return c.replace(/^(\d{3})(\d{3})(\d+)$/, '$1 $2 $3');
+// ---------- esito (senza prezzi) ----------
+function esito() {
+  const si = s => /^sì/i.test(s);
+  const A = val('Prenoti per i nei');
+  if (!A) return null;
+  const MCU = { nome: 'Consulto mirato neo urgente', det: 'Il dottore vede solo questi nei, con tempi più rapidi. Se un neo va tolto, si fa in un secondo appuntamento.' };
+  const VN = { nome: 'Visita dei nei', det: 'L\'attesa è di circa tre mesi.' };
+  const PV = { nome: 'Prima visita', det: '' };
+  if (/^per i nei/i.test(A)) {
+    const M = val('Il dottore ti ha già fatto la mappatura');
+    if (si(M)) {
+      const Q = val('Devi far vedere pochi nei');
+      if (/^il controllo/i.test(Q)) {
+        const mel = val('Hai avuto un melanoma');
+        if (!mel) return null;
+        return si(mel) ? { nome: 'Mappatura', det: 'Alla scadenza che ti ha indicato il dottore.' }
+                       : { nome: 'Controllo della mappatura', det: 'Si fa a circa un anno dall\'ultimo controllo.' };
+      }
+      const U = val('Vuoi far vedere questi nei presto');
+      if (!U) return null;
+      return si(U) ? MCU : { nome: 'Ricontrollo dei nei', det: 'Lo studio verifica sulla tua cartellina e ti richiama.' };
+    }
+    if (!M) return null;
+    const Q = val('Devi far vedere uno o alcuni nei');
+    if (/^tutti/i.test(Q)) return VN;
+    const U = val('Vuoi far vedere questi nei presto');
+    if (!U) return null;
+    return si(U) ? MCU : VN;
+  }
+  const V = val('Devi far vedere un problema');
+  if (/^far vedere/i.test(V)) {
+    const U = val('Il problema è urgente');
+    if (si(U)) return /^solo/i.test(val('Devi far vedere solo questo')) ? { nome: 'Consulto mirato', det: 'Il dottore vede solo questo problema, con tempi più rapidi.' } : PV;
+    if (/acne/i.test(U)) return { nome: 'Controllo dell\'acne', det: '' };
+    if (/capelli/i.test(U)) return { nome: 'Controllo dei capelli', det: '' };
+    return U ? PV : null;
+  }
+  const T = val('Che trattamento');
+  if (/^infiltrazione/i.test(T)) return { nome: 'Infiltrazione', det: '' };
+  const quante = () => [val('Quante sono') && val('Quante sono').toLowerCase(), si(val('Sono sul viso')) ? 'sul viso' : ''].filter(Boolean).join(', ');
+  if (/^verruche/i.test(T)) return { nome: 'Trattamento di verruche o escrescenze', det: quante() };
+  if (/^macchie/i.test(T)) return si(val('Il dottore ha già visto')) ? { nome: 'Trattamento delle macchie', det: quante() }
+    : { nome: 'Prima visita', det: 'Prima del trattamento il dottore deve valutare le macchie.' };
+  return null;
 }
+const cartaEsito = (e, etichetta) => el('div', { class: 'esito' }, el('span', { class: 'lab' }, etichetta), el('span', { class: 'nome' }, e.nome), e.det ? el('span', { class: 'det' }, e.det) : null);
+
+// ---------- regole (dal testo iniziale del modulo) ----------
+const regole = () => String(S.pagine[0].descr || '').split('\n').map(r => r.trim()).filter(r => /^•/.test(r)).map(r => r.replace(/^•\s*/, ''));
 
 // ---------- disegno ----------
-function mostra() {
-  window.scrollTo(0, 0);
-  $('nav').hidden = modo === 'fatto';
-  if (modo === 'riepilogo') return mostraRiepilogo();
-  if (modo === 'fatto') return;
-  const st = cur();
-  const pag = S.pagine[st.p];
-  const d = domandaDi(st);
-  const primaDellaPagina = st.q <= 0;
-  $('barra').style.width = Math.round(100 * (st.p + (st.q > 0 ? st.q / pag.domande.length : 0)) / S.pagine.length) + '%';
-
-  let h = '';
-  if (primaDellaPagina && st.p > 0 && (pag.titolo || pag.descr)) {
-    h += '<div class="card">' + (pag.titolo ? '<div class="sez">' + esc(pag.titolo) + '</div>' : '') +
-         (pag.descr ? '<p class="descr' + (pag.descr.length > 200 ? ' box' : '') + '">' + linkify(pag.descr) + '</p>' : '') + '</div>';
+function campo(d) {
+  const L = lay(d), e = err[d.id];
+  const f = el('div', { class: 'fld' + (L.half ? ' half' : '') + (e ? ' bad' : '') });
+  const set = v => {
+    ris[d.id] = v; salva();
+    if (err[d.id]) { delete err[d.id]; f.classList.remove('bad'); f.querySelector('.msg')?.remove(); barra(); }
+  };
+  const etichetta = L.lab || d.titolo;
+  if (d.tipo === 'info') {
+    f.append(el('span', { class: 'lab' }, d.titolo));
+    if (d.aiuto) f.append(testo('aiuto', d.aiuto));
+    return f;
   }
-  if (st.p === 0 && primaDellaPagina && pag.descr) h += '<div class="card"><p class="descr">' + linkify(pag.descr) + '</p></div>';
-  if (d) h += '<div class="card">' + disegnaDomanda(d) + '</div>';
-  $('main').innerHTML = h || '<div class="card"></div>';
-
-  $('indietro').disabled = storia.length <= 1;
-  $('avanti').textContent = (d && !d.obbl && vuota(d) && d.tipo !== 'info') ? 'Salta' : 'Avanti';
-  if (d) collega(d);
-}
-
-function disegnaDomanda(d) {
-  let h = '<h2>' + esc(d.titolo) + (d.obbl ? ' <span class="obbl">*</span>' : '') + '</h2>';
-  if (d.aiuto) h += '<p class="aiuto">' + linkify(d.aiuto) + '</p>';
-  const v = risposte[d.id];
-  switch (d.tipo) {
-    case 'info': return h;
-    case 'testo':
-      if (isTel(d)) return h + '<input id="campo" type="tel" inputmode="tel" autocomplete="tel" value="' + esc(v || '') + '">';
-      if (isEmail(d)) return h + '<input id="campo" type="email" inputmode="email" autocomplete="email" value="' + esc(v || '') + '">';
-      if (isAnno(d)) return h + '<input id="campo" type="text" inputmode="numeric" maxlength="4" value="' + esc(v || '') + '">';
-      return h + '<input id="campo" type="text" autocomplete="off" value="' + esc(v || '') + '">';
-    case 'paragrafo':
-      return h + '<textarea id="campo">' + esc(v || '') + '</textarea>';
-    case 'scelta': {
-      const altroTesto = risposte[d.id + '_altro'] || '';
-      const isAltro = v === '__altro__' || (v && d.altro && !d.scelte.some(c => c.v === v));
-      h += d.scelte.map((c, i) => '<button type="button" class="opz' + (v === c.v ? ' sel' : '') + '" data-i="' + i + '">' +
-           (v === c.v ? '<span class="tick">✓</span>' : '') + esc(c.v) + '</button>').join('');
-      if (d.altro) h += '<button type="button" class="opz' + (isAltro ? ' sel' : '') + '" data-altro="1">Altro…</button>' +
-           '<input id="altro" type="text" placeholder="Scrivi qui" value="' + esc(isAltro && v !== '__altro__' ? v : altroTesto) + '"' + (isAltro ? '' : ' hidden') + '>';
-      return h;
-    }
-    case 'spunte': {
-      const sel = Array.isArray(v) ? v : [];
-      return h + d.scelte.map((c, i) => '<button type="button" class="opz' + (sel.includes(c.v) ? ' sel' : '') + '" data-i="' + i + '">' +
-             (sel.includes(c.v) ? '<span class="tick">✓</span>' : '☐ ') + esc(c.v) + '</button>').join('');
-    }
-    case 'griglia': {
-      const g = v || {};
-      h += '<table class="griglia"><tr><th></th>' + d.colonne.map(c => '<th>' + esc(c) + '</th>').join('') + '</tr>';
-      d.righe.forEach((r, ri) => {
-        h += '<tr><td>' + esc(r) + '</td>' + d.colonne.map((c, ci) =>
-          '<td><button type="button" class="chip' + ((g[r] || []).includes(c) ? ' sel' : '') + '" data-r="' + ri + '" data-c="' + ci + '">' +
-          ((g[r] || []).includes(c) ? '✓' : '') + '</button></td>').join('') + '</tr>';
-      });
-      return h + '</table>';
-    }
-    default:
-      return h + '<p class="aiuto">Questa domanda si può compilare solo nel modulo Google.</p>';
-  }
-}
-
-function collega(d) {
-  const campo = $('campo');
-  if (campo) {
-    campo.addEventListener('input', () => { risposte[d.id] = campo.value; aggiornaTasto(d); togliErrore(); });
-    if (isTel(d)) campo.addEventListener('blur', () => { campo.value = formattaTel(campo.value); risposte[d.id] = campo.value; });
-    if (campo.tagName === 'INPUT') campo.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); campo.blur(); avanti(); } });
-    if (!('ontouchstart' in window)) campo.focus();
-  }
-  document.querySelectorAll('#main .opz[data-i]').forEach(b => b.addEventListener('click', () => {
-    const c = d.scelte[Number(b.dataset.i)].v;
-    if (d.tipo === 'spunte') {
-      const sel = Array.isArray(risposte[d.id]) ? risposte[d.id].slice() : [];
-      const k = sel.indexOf(c);
-      if (k >= 0) sel.splice(k, 1); else sel.push(c);
-      risposte[d.id] = sel;
-      mostra();
-      return;
-    }
-    if (inAttesa) return;
-    risposte[d.id] = c;
-    mostra();
-    inAttesa = true;                                       // scelta singola: si passa da soli alla domanda dopo
-    setTimeout(() => { inAttesa = false; avanti(); }, 220);
-  }));
-  const bAltro = document.querySelector('#main .opz[data-altro]');
-  if (bAltro) {
-    const inp = $('altro');
-    bAltro.addEventListener('click', () => {
-      risposte[d.id] = inp.value.trim() || '__altro__';
-      document.querySelectorAll('#main .opz').forEach(x => x.classList.remove('sel'));
-      bAltro.classList.add('sel'); inp.hidden = false; inp.focus();
+  if (d.tipo === 'spunte') {
+    if (d.aiuto) f.append(el('span', { class: 'lab' + (d.obbl ? ' req' : '') }, d.titolo), testo('aiuto', d.aiuto));
+    d.scelte.forEach(c => {
+      const on = () => (ris[d.id] || []).includes(c.v);
+      const b = el('button', { type: 'button', class: 'spunta', 'aria-pressed': String(on()), onclick: () => {
+        const a = new Set(ris[d.id] || []); a.has(c.v) ? a.delete(c.v) : a.add(c.v);
+        set([...a]); b.setAttribute('aria-pressed', String(on())); b.querySelector('.box').textContent = on() ? '✓' : '';
+      } }, el('span', { class: 'box' }, on() ? '✓' : ''), el('span', {}, c.v));
+      f.append(b);
     });
-    inp.addEventListener('input', () => { risposte[d.id] = inp.value.trim() || '__altro__'; risposte[d.id + '_altro'] = inp.value; togliErrore(); });
+  } else if (d.tipo === 'scelta') {
+    f.append(el('span', { class: 'lab' + (d.obbl ? ' req' : '') }, etichetta));
+    if (d.aiuto) f.append(testo('aiuto', d.aiuto));
+    const seg = el('div', { class: 'seg', role: 'group' });
+    d.scelte.forEach(c => seg.append(el('button', { type: 'button', 'aria-pressed': String(ris[d.id] === c.v), onclick: ev => {
+      set(c.v); seg.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === ev.currentTarget)));
+    } }, c.v)));
+    f.append(seg);
+  } else if (d.tipo === 'griglia') {
+    f.append(el('span', { class: 'lab' + (d.obbl ? ' req' : '') }, etichetta));
+    if (d.aiuto) f.append(testo('aiuto', d.aiuto));
+    const v = ris[d.id] || {};
+    const tab = el('table', { class: 'griglia' });
+    d.righe.forEach(r => tab.append(el('tr', {}, el('th', {}, r), d.colonne.map(col => el('td', {}, el('button', {
+      type: 'button', class: 'cella', 'aria-pressed': String(!!(v[r] && v[r].includes(col))), 'aria-label': r + ' ' + col,
+      onclick: ev => {
+        const nv = Object.assign({}, ris[d.id] || {}); const a = new Set(nv[r] || []);
+        a.has(col) ? a.delete(col) : a.add(col);
+        if (a.size) nv[r] = d.colonne.filter(x => a.has(x)); else delete nv[r];
+        set(nv); ev.currentTarget.setAttribute('aria-pressed', String(a.has(col)));
+      } }, col))))));
+    f.append(el('div', {}, tab));
+    const tutto = d.righe.find(r => /qualsiasi/i.test(r));
+    f.append(el('div', { class: 'mini' },
+      tutto ? el('button', { type: 'button', class: 'btn', onclick: () => { set({ [tutto]: [...d.colonne] }); disegna(); } }, 'Va bene tutto') : null,
+      el('button', { type: 'button', class: 'btn', onclick: () => { set({}); disegna(); } }, 'Svuota')));
+  } else {
+    const id = 'f' + d.id;
+    f.append(el('label', { for: id, class: 'lab' + (d.obbl ? ' req' : '') }, etichetta));
+    const inp = d.tipo === 'paragrafo'
+      ? el('textarea', { id, rows: 3, placeholder: L.ph })
+      : el('input', { id, type: isTel(d) ? 'tel' : isEmail(d) ? 'email' : 'text', placeholder: L.ph,
+          autocomplete: isTel(d) ? 'tel' : isEmail(d) ? 'email' : /^cognome/i.test(d.titolo) ? 'family-name' : /^nome/i.test(d.titolo) ? 'given-name' : 'off',
+          inputmode: isAnno(d) ? 'numeric' : isTel(d) ? 'tel' : isEmail(d) ? 'email' : null, maxlength: isAnno(d) ? 4 : null });
+    inp.value = ris[d.id] || '';
+    inp.addEventListener('input', () => { if (isAnno(d)) inp.value = inp.value.replace(/\D/g, ''); set(inp.value); });
+    inp.addEventListener('blur', () => {
+      let t = inp.value;
+      if (isTel(d)) t = formattaTel(t);
+      if (L.nome) t = iniziali(t.trim().replace(/\s+/g, ' '));
+      if (t !== inp.value) { inp.value = t; set(t); }
+    });
+    f.append(inp);
+    if (d.aiuto && !L.lab) f.append(testo('aiuto', d.aiuto));
   }
-  document.querySelectorAll('#main .chip').forEach(b => b.addEventListener('click', () => {
-    const r = d.righe[Number(b.dataset.r)], c = d.colonne[Number(b.dataset.c)];
-    const g = Object.assign({}, risposte[d.id] || {});
-    const sel = (g[r] || []).slice();
-    const k = sel.indexOf(c);
-    if (k >= 0) sel.splice(k, 1); else sel.push(c);
-    g[r] = sel; risposte[d.id] = g;
-    b.classList.toggle('sel'); b.textContent = k >= 0 ? '' : '✓';
-    aggiornaTasto(d);
-  }));
+  if (e) f.append(el('div', { class: 'msg' }, e));
+  return f;
 }
 
-function aggiornaTasto(d) { $('avanti').textContent = (!d.obbl && vuota(d)) ? 'Salta' : 'Avanti'; }
-function togliErrore() { const e = document.querySelector('.err'); if (e) e.remove(); }
-
-// ---------- riepilogo e invio ----------
-function testoRisposta(d) {
-  const v = risposte[d.id];
-  if (d.tipo === 'griglia') return Object.entries(v || {}).filter(([, a]) => a && a.length).map(([r, a]) => r + ': ' + a.join(', ').toLowerCase()).join('\n');
-  if (Array.isArray(v)) return v.join(', ');
-  return v;
+function disegnaPagina() {
+  const p = storia[storia.length - 1], pag = S.pagine[p], q = smista(p);
+  const card = el('section', { class: 'card', id: 'attivo' });
+  if (p > 0 && pag.titolo) card.append(el('div', { class: 'eyebrow' }, pag.titolo));
+  if (pag.descr) {
+    const d = p === 0 ? pag.descr.split('\n').filter(l => l.indexOf('github.io') < 0).join('\n').replace(/^\n+/, '') : pag.descr;
+    card.append(testo('descr' + (p > 0 && d.length > 160 ? ' box' : ''), d));
+  }
+  const campi = campiDi(p);
+  if (campi.length) card.append(el('div', { class: 'campi' }, campi.map(campo)));
+  if (q) {
+    card.append(el('h2', { class: 'q' }, q.titolo));
+    if (q.aiuto) card.append(testo('aiuto', q.aiuto));
+    card.append(el('div', { class: 'scelte' }, q.scelte.map(c =>
+      el('button', { type: 'button', class: 'scelta' + (ris[q.id] === c.v ? ' sel' : ''), onclick: () => scegli(q, c.v) }, c.v))));
+  }
+  return card;
 }
 
-function domandeDelPercorso() {
-  const viste = [];
-  storia.forEach((st, i) => {
-    const d = domandaDi(st);
-    if (d && d.tipo !== 'info' && d.tipo !== 'non_gestito') viste.push({ d, i });
+function disegnaRiepilogo() {
+  const card = el('section', { class: 'card', id: 'attivo' }, el('div', { class: 'eyebrow' }, 'Controllo finale'), el('h2', { class: 'q' }, 'Controlla prima di inviare'));
+  const e = esito();
+  if (e) card.append(cartaEsito(e, 'Stai chiedendo'));
+  const box = el('div', { class: 'riep' });
+  const riga = (k, v, i) => box.append(el('div', { class: 'r' }, el('span', { class: 'k' }, k), el('span', { class: 'v' }, v),
+    el('button', { type: 'button', class: 'c', onclick: () => vaiA(i) }, 'correggi')));
+  const scelte = [];
+  storia.forEach((p, i) => {
+    campiDi(p).forEach(d => {
+      if (d.tipo === 'info' || vuota(d) || (d.tipo === 'spunte' && d.scelte.length === 1)) return;
+      let v = ris[d.id];
+      if (d.tipo === 'griglia') v = Object.entries(v).filter(([, a]) => a && a.length).map(([r, a]) => r + ': ' + a.join(' e ').toLowerCase()).join('\n');
+      riga(lay(d).lab || d.titolo, Array.isArray(v) ? v.join(', ') : String(v), i);
+    });
+    const q = smista(p);
+    if (q && ris[q.id]) scelte.push([corto(ris[q.id]), i]);
   });
-  return viste;
+  if (scelte.length) box.prepend(el('div', { class: 'r' }, el('span', { class: 'k' }, 'Le tue risposte'), el('span', { class: 'v' }, scelte.map(x => x[0]).join(' › ')),
+    el('button', { type: 'button', class: 'c', onclick: () => vaiA(scelte[0][1]) }, 'correggi')));
+  card.append(box);
+  return card;
 }
 
-function mostraRiepilogo() {
-  $('barra').style.width = '100%';
-  let h = '<div class="card"><h2>Controlla prima di inviare</h2><dl class="riep">';
-  domandeDelPercorso().forEach(({ d, i }) => {
-    if (vuota(d) || d.tipo === 'spunte' && d.scelte.length === 1) return;
-    h += '<dt>' + esc(d.titolo) + '</dt><dd>' + esc(testoRisposta(d)) + '<a href="#" data-i="' + i + '">correggi</a></dd>';
+function disegnaFatto() {
+  const out = [el('section', { class: 'conf' }, el('div', { class: 't' }, '✓ Richiesta ricevuta'),
+    ultimo.nome ? el('div', {}, ultimo.nome) : null)];
+  const card = el('section', { class: 'card' });
+  if (ultimo.esito) card.append(cartaEsito(ultimo.esito, 'Hai chiesto'));
+  const rr = regole();
+  if (rr.length) card.append(el('h2', { class: 'q' }, 'Come funziona adesso'), el('ul', { class: 'regole' }, rr.map(r => { const li = el('li'); li.innerHTML = linkify(r); return li; })));
+  card.append(el('button', { type: 'button', class: 'big pri', onclick: altraPersona }, '➕ Prenota anche per un\'altra persona'),
+    el('div', { class: 'aiuto', style: 'text-align:center;margin-top:-6px' }, 'Telefono e giorni restano già compilati.'),
+    el('button', { type: 'button', class: 'big', onclick: () => { ultimo = null; ris = {}; storia = [0]; modo = 'finito'; disegna(); } }, 'Ho finito'));
+  out.push(card);
+  return out;
+}
+
+function disegnaPercorso() {
+  const nav = $('path'); nav.textContent = '';
+  if (modo === 'fatto' || modo === 'finito') return;
+  const passi = [];
+  storia.forEach((p, i) => {
+    if (i === storia.length - 1 && modo === 'pagina') return;
+    const q = smista(p);
+    if (q && ris[q.id]) passi.push(el('button', { type: 'button', title: q.titolo + ' → ' + ris[q.id], onclick: () => vaiA(i) }, corto(ris[q.id])));
+    else if (p === 1 || /^chi deve/i.test(S.pagine[p].titolo)) {
+      const n = [val('Cognome'), val('Nome')].filter(Boolean).join(' ');
+      if (n) passi.push(el('button', { type: 'button', onclick: () => vaiA(i) }, n));
+    }
   });
-  h += '</dl></div>';
-  $('main').innerHTML = h;
-  document.querySelectorAll('.riep a').forEach(a => a.addEventListener('click', e => {
-    e.preventDefault();
-    storia = storia.slice(0, Number(a.dataset.i) + 1);
-    modo = 'domanda'; mostra();
-  }));
-  $('indietro').disabled = false;
-  $('avanti').textContent = 'Invia la richiesta';
+  passi.forEach((b, i) => { if (i) nav.append(el('span', { class: 'sep' }, '›')); nav.append(b); });
 }
 
+function barra() {
+  const nav = $('nav'), bI = $('bInd'), bA = $('bAv'), m = $('msgb');
+  nav.hidden = modo === 'fatto' || modo === 'finito';
+  if (nav.hidden) return;
+  const p = storia[storia.length - 1];
+  const q = modo === 'pagina' ? smista(p) : null;
+  bI.disabled = storia.length < 2 && modo === 'pagina';
+  m.className = 'msgb'; m.textContent = '';
+  if (Object.keys(err).length) { m.className = 'msgb bad'; m.textContent = 'Completa i campi in rosso.'; }
+  else if (q) m.textContent = 'Scegli una risposta';
+  bA.hidden = !!q;
+  bA.disabled = invio;
+  const ultima = modo === 'pagina' && !q && dopo(p) < 0;
+  bA.className = 'nb ' + (modo === 'riepilogo' ? 'invia' : 'pri');
+  bA.textContent = invio ? 'Invio in corso…' : modo === 'riepilogo' ? 'Invia ✓' : ultima ? 'Controlla →' : 'Avanti →';
+}
+
+function disegna(scorri) {
+  const main = $('main'); main.textContent = '';
+  const nt = $('notice'); nt.textContent = '';
+  if (avviso) nt.append(avviso);
+  if (modo === 'pagina') main.append(disegnaPagina());
+  else if (modo === 'riepilogo') main.append(disegnaRiepilogo());
+  else if (modo === 'fatto') main.append(...disegnaFatto());
+  else if (modo === 'finito') main.append(el('section', { class: 'conf' }, el('div', { class: 't' }, 'Grazie, a presto'), el('div', {}, 'Puoi chiudere questa pagina.')));
+  const p = storia[storia.length - 1];
+  $('barra').style.width = (modo === 'pagina' ? Math.round(100 * p / S.pagine.length) : 100) + '%';
+  disegnaPercorso(); barra(); salva();
+  if (scorri) {
+    window.scrollTo({ top: 0 });
+    if (!('ontouchstart' in window)) {
+      const a = $('attivo'), primo = a && [...a.querySelectorAll('input,textarea')].find(x => !x.value);
+      if (primo) primo.focus({ preventScroll: true });
+    }
+  }
+}
+
+// ---------- navigazione ----------
+function scegli(q, v) {
+  const p = storia[storia.length - 1];
+  ris[q.id] = v;
+  if (!valida(p)) { disegna(); document.querySelector('.fld.bad')?.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+  vaiOltre(p);
+}
+function avanti() {
+  if (modo === 'riepilogo') return invia();
+  const p = storia[storia.length - 1];
+  if (!valida(p)) { disegna(); document.querySelector('.fld.bad')?.scrollIntoView({ block: 'center', behavior: 'smooth' }); return; }
+  vaiOltre(p);
+}
+function vaiOltre(p) {
+  avviso = null; err = {};
+  const np = dopo(p);
+  if (np < 0) modo = 'riepilogo'; else storia.push(np);
+  disegna(true);
+}
+function indietro() {
+  avviso = null; err = {};
+  if (modo === 'riepilogo') { modo = 'pagina'; return disegna(true); }
+  if (storia.length > 1) { storia.pop(); disegna(true); }
+}
+function vaiA(i) { modo = 'pagina'; storia = storia.slice(0, i + 1); err = {}; avviso = null; disegna(true); }
+
+// ---------- invio ----------
 async function invia() {
-  const b = $('avanti');
-  b.disabled = true; b.textContent = 'Invio in corso…';
-  const elenco = domandeDelPercorso()
-    .filter(({ d }) => !vuota(d))
-    .map(({ d }) => ({ id: d.id, valore: risposte[d.id] }));
+  if (invio) return;
+  const elenco = domandePercorso().filter(d => !vuota(d)).map(d => ({ id: d.id, valore: ris[d.id] }));
+  invio = true; barra();
   try {
     const r = await fetch(API, {
       method: 'POST', credentials: 'omit', redirect: 'follow',
@@ -380,51 +500,86 @@ async function invia() {
     });
     const j = await r.json();
     if (!j.ok) throw new Error(j.errore || 'errore');
-    const nome = S.pagine.flatMap(p => p.domande);
-    const cogn = nome.find(d => /^cognome/i.test(d.titolo)), nm = nome.find(d => /^nome/i.test(d.titolo));
-    ultimaPersona = [cogn && risposte[cogn.id], nm && risposte[nm.id]].filter(Boolean).join(' ');
-    modo = 'fatto';
-    mostraFatto();
+    ultimo = { nome: [val('Cognome'), val('Nome')].filter(Boolean).join(' '), esito: esito(), ris: JSON.parse(JSON.stringify(ris)) };
+    invio = false; modo = 'fatto'; avviso = null;
+    try { localStorage.removeItem(KEY_BOZZA); } catch (e) {}
+    disegna(true);
   } catch (e) {
-    b.disabled = false; b.textContent = 'Invia la richiesta';
-    const cambiato = String(e.message).indexOf('MODULO_CAMBIATO') >= 0;
-    mostraErrore(cambiato
-      ? 'Il modulo è stato aggiornato proprio ora. Ricarica la pagina e compila di nuovo, per favore.'
-      : 'Invio non riuscito. Controlla la connessione e riprova. Se non funziona, usa il modulo Google (link in fondo).');
+    invio = false;
+    avviso = el('div', { class: 'err-box' }, String(e.message).indexOf('MODULO_CAMBIATO') >= 0
+      ? 'Il modulo è stato aggiornato proprio ora: ricarica la pagina e compila di nuovo, per favore.'
+      : 'Invio non riuscito. Controlla la connessione e premi di nuovo «Invia». Se non funziona, usa il modulo Google (link in fondo alla pagina).');
+    disegna();
   }
 }
-
-function mostraFatto() {
-  $('nav').hidden = true;
-  $('barra').style.width = '100%';
-  $('main').innerHTML = '<div class="card fatto"><div class="ico">✓</div><h2>Richiesta ricevuta</h2>' +
-    '<p class="descr">' + linkify(S.conferma || 'Ti telefoniamo noi per fissare giorno e ora.').replace(/Se devi prenotare[^]*$/, '') + '</p></div>' +
-    '<button class="opz" id="altraPersona">➕ Prenota anche per un\'altra persona<br><span class="aiuto">Telefono e giorni restano compilati</span></button>' +
-    '<button class="opz" id="fine">Ho finito</button>';
-  $('altraPersona').addEventListener('click', altraPersona);
-  $('fine').addEventListener('click', () => {
-    $('main').innerHTML = '<div class="card fatto"><h2>Grazie, a presto.</h2><p class="aiuto">Puoi chiudere questa pagina.</p></div>';
-  });
-}
-
 function altraPersona() {
-  const tutte = S.pagine.flatMap(p => p.domande);
-  const tieni = {};
+  const prima = ultimo.ris, tutte = S.pagine.flatMap(p => p.domande);
+  ris = {};
   tutte.forEach(d => {
-    if (d.tipo === 'spunte' && d.scelte.length === 1 && risposte[d.id]) tieni[d.id] = risposte[d.id];  // consenso
-    if (isTel(d) || isEmail(d) || d.tipo === 'griglia') { if (risposte[d.id]) tieni[d.id] = risposte[d.id]; }
+    if ((d.tipo === 'spunte' && d.scelte.length === 1) || isTel(d) || isEmail(d) || d.tipo === 'griglia') { if (prima[d.id]) ris[d.id] = prima[d.id]; }
   });
-  const insieme = tutte.find(d => /insieme/i.test(d.titolo));
-  if (insieme && ultimaPersona) {
-    const prima = risposte[insieme.id] ? String(risposte[insieme.id]) + ', ' : '';
-    tieni[insieme.id] = prima.indexOf(ultimaPersona) >= 0 ? risposte[insieme.id] : prima + ultimaPersona;
+  const ins = tutte.find(d => /insieme/i.test(d.titolo));
+  if (ins && ultimo.nome) {
+    const v = String(prima[ins.id] || '');
+    ris[ins.id] = v.indexOf(ultimo.nome) >= 0 ? v : (v ? v + ', ' : '') + ultimo.nome;
   }
-  risposte = tieni;
-  nuovaScheda();
+  preimposta();
+  ultimo = null; storia = [0]; modo = 'pagina'; err = {}; inizio = Date.now();
+  avviso = el('div', { class: 'notice' }, 'Nuova scheda per un\'altra persona: telefono e giorni sono già compilati.');
+  disegna(true);
+}
+function preimposta() {
+  S.pagine.flatMap(p => p.domande).forEach(d => {
+    if (/^età/i.test(d.titolo) && !ris[d.id]) { const a = d.scelte.find(c => /^adulto/i.test(c.v)); if (a) ris[d.id] = a.v; }
+  });
 }
 
-$('avanti').addEventListener('click', () => modo === 'riepilogo' ? invia() : avanti());
-$('indietro').addEventListener('click', indietro);
+// ---------- bozza nel telefono ----------
+function salva() {
+  try {
+    if (modo === 'pagina' || modo === 'riepilogo') localStorage.setItem(KEY_BOZZA, JSON.stringify({ t: Date.now(), ris, storia, modo }));
+  } catch (e) {}
+}
+function riprendi() {
+  try {
+    const b = JSON.parse(localStorage.getItem(KEY_BOZZA) || 'null');
+    if (!b || Date.now() - b.t > 24 * 3600 * 1000 || !Array.isArray(b.storia) || b.storia.some(p => !S.pagine[p])) return false;
+    const scritto = Object.keys(b.ris || {}).some(k => S.pagine.some(p => p.domande.some(d => d.id === k && !/^età/i.test(d.titolo) && d.tipo !== 'spunte')));
+    if (!scritto) return false;
+    ris = b.ris; storia = b.storia; modo = b.modo === 'riepilogo' ? 'riepilogo' : 'pagina';
+    avviso = el('div', { class: 'notice' }, 'Abbiamo ripreso la scheda che stavi compilando. ',
+      el('button', { type: 'button', onclick: () => { try { localStorage.removeItem(KEY_BOZZA); } catch (e) {} ris = {}; preimposta(); storia = [0]; modo = 'pagina'; avviso = null; disegna(true); } }, 'Ricomincia da capo'));
+    return true;
+  } catch (e) { return false; }
+}
+
+// ---------- avvio ----------
+async function carica() {
+  try {
+    const r = await fetch(API, { credentials: 'omit' });
+    const j = await r.json();
+    if (!j.ok) throw new Error(j.errore || 'errore');
+    S = j.struttura;
+    $('piede').innerHTML = 'Problemi con questa pagina? Usa il <a href="' + MODULO_RISERVA + '" target="_blank" rel="noopener">modulo Google</a>.';
+    if (!riprendi()) preimposta();
+    disegna();
+  } catch (e) {
+    $('main').replaceChildren(el('section', { class: 'card' }, el('h2', { class: 'q' }, 'La pagina non si è caricata'),
+      el('p', { class: 'aiuto' }, 'Controlla la connessione e riprova, oppure usa il modulo Google.'),
+      el('a', { class: 'big pri', href: MODULO_RISERVA, style: 'text-align:center;text-decoration:none' }, 'Apri il modulo Google'),
+      el('button', { type: 'button', class: 'big', onclick: () => location.reload() }, 'Riprova')));
+  }
+}
+$('bAv').addEventListener('click', avanti);
+$('bInd').addEventListener('click', indietro);
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+    e.preventDefault();
+    const tutti = [...document.querySelectorAll('#attivo input')];
+    const i = tutti.indexOf(e.target);
+    if (tutti[i + 1]) tutti[i + 1].focus(); else e.target.blur();
+  }
+});
 carica();
 </script>
 </body>
